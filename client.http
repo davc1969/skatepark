@@ -1,0 +1,53 @@
+// Get all skaters
+http://localhost:3000/api/skaters
+
+###
+// Get one skater by id
+http://localhost:3000/api/skater/
+    ?id=1
+
+###
+// Add new skater
+POST http://localhost:3000/api/v2/new
+Content-Type: application/json
+
+{
+    "email": "yuuu@r.com",
+    "nombre": "rftttg gtrf",
+    "password":"qwerty",
+    "anos_experiencia": 14,
+    "especialidad": "pol",
+    "foto": "",
+    "estado": true
+}
+
+###
+//delete a skater by id
+DELETE http://localhost:3000/api/skater
+    ?id=12
+
+
+###
+PUT http://localhost:3000/api/skater
+Content-Type: application/json
+    ?id=12
+
+{
+    "email": "yuuu@r.com",
+    "nombre": "rftttg gtrf",
+    "password":"qwerty",
+    "anos_experiencia": 14,
+    "especialidad": "pol",
+    "foto": "",
+    "estado": true
+}
+
+
+###
+POST http://localhost:3000/api/v2/auth
+Content-Type: application/json
+
+{
+    "email": "Nathan@yesenia.net",
+    "password":"123456"
+}

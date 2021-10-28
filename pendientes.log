@@ -1,0 +1,14 @@
+
+- construir todos los parciales y las vistas
+    - falta construir:
+        * Admin
+        * Datos
+        * Registro
+        + Login ya está el html, falta el js que lo acompañe
+- crear registro que permita seleccionar foto.  Usar librería express-fileupload
+- Aplicar validadcion de datos de entrada en registro según librería JOI
+- path para guardar fotos debe ser público con express.static
+- crear js en frontend para solicitar autenticación en login con JWT
+- La validación del login también se puede hacer con JOI en el servidor, pero debería hacerse directo en el frontend con js simple
+- Hacer un modulo de testing con librería Mocha-Chai para probar su implementación
+
