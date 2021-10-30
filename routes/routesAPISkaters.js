@@ -2,6 +2,7 @@ const routesSkaters = require("express").Router();
 const skaters = require("../controllers/skaters");
 
 
+
 // API v2. api returns values and they are showed by the router not the controller
 routesSkaters.get("/api/skaters", (req, res) => {
     console.log("API2 skaters get all");
@@ -20,14 +21,8 @@ routesSkaters.delete("/api/skater/:id", (req, res) => {
 
 routesSkaters.post("/api/skater/new", (req, res) => {
     console.log("API2 skaters post one");
+    console.log("rrff ", req.body);
     runControl(req, res, skaters.postSkater);
-    // skaters.postSkater(req, res)
-    // .then( (result) => {
-    //     res.json(result);
-    // })
-    // .catch ( (error) => {
-    //     console.log("error en post de skaters ", error.message);
-    // })
 });
 
 routesSkaters.put("/api/skater/:id", (req, res) => {
@@ -46,11 +41,30 @@ routesSkaters.post("/api/skater/auth", async (req, res) => {
     res.json( token )
 });
 
+
+routesSkaters.post("/api/skater/pic", (req, res) => {
+    console.log("API2 skaters post one");
+    console.log("rrff ", req.files);
+    runControl(req, res, skaters.uploadSkaterPic);
+    // skaters.postSkater(req, res)
+    // .then( (result) => {
+    //     res.json(result);
+    // })
+    // .catch ( (error) => {
+    //     console.log("error en post de skaters ", error.message);
+    // })
+});
+
+
 const runControl = (req, res, skaterFunction) => {
     skaterFunction(req, res)
     .then( (result) => {
         res.status(result.serverCode);
         res.json(result.listaSkaters)
+    })
+    .catch ( (error) => {
+        res.status(result.serverCode);
+        res.json(result.errorMessage)
     })
 }
 

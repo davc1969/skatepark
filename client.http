@@ -1,42 +1,40 @@
 // Get all skaters
-http://localhost:3000/api/skaters
+GET http://localhost:3000/api/skaters
 
 ###
 // Get one skater by id
-http://localhost:3000/api/skater/
-    ?id=1
+GET http://localhost:3000/api/skater/3
+    
 
 ###
 // Add new skater
-POST http://localhost:3000/api/v2/new
+POST http://localhost:3000/api/skater/new
 Content-Type: application/json
 
 {
-    "email": "yuuu@r.com",
-    "nombre": "rftttg gtrf",
-    "password":"qwerty",
-    "anos_experiencia": 14,
-    "especialidad": "pol",
+    "email": "d@skater.com",
+    "nombre": "Dario Valenzuela 2",
+    "password":"admin",
+    "anos_experiencia": 1,
+    "especialidad": "Ollie",
     "foto": "",
-    "estado": true
+    "estado": false
 }
 
 ###
 //delete a skater by id
-DELETE http://localhost:3000/api/skater
-    ?id=12
+DELETE http://localhost:3000/api/skater/67
 
 
 ###
-PUT http://localhost:3000/api/skater
+PUT http://localhost:3000/api/skater/67
 Content-Type: application/json
-    ?id=12
 
 {
     "email": "yuuu@r.com",
-    "nombre": "rftttg gtrf",
-    "password":"qwerty",
-    "anos_experiencia": 14,
+    "nombre": "Andrew",
+    "password":"qwerty2",
+    "anos_experiencia": 4,
     "especialidad": "pol",
     "foto": "",
     "estado": true
@@ -44,10 +42,15 @@ Content-Type: application/json
 
 
 ###
-POST http://localhost:3000/api/v2/auth
+POST http://localhost:3000/api/skater/auth
 Content-Type: application/json
 
 {
     "email": "Nathan@yesenia.net",
     "password":"123456"
 }
+
+
+###
+
+GET http://localhost:3000/datos?tkn=eyJhbGciOiJIUzI1NiJ9.W3siaWQiOjQ3LCJlbWFpbCI6Ik5hdGhhbkB5ZXNlbmlhLm5ldCIsIm5vbWJyZSI6Ik5hdGFuIHByaW5jZSIsInBhc3N3b3JkIjoiJDJiJDEwJEhwVGNkQXdPalhUOERYMGdjcEY4N09yd0I5ajdzbXdDV3F5eWRQR0xhWWZYOHFHNDJOSmtLIiwiYW5vc19leHBlcmllbmNpYSI6MSwiZXNwZWNpYWxpZGFkIjoiT2xsaWUiLCJmb3RvIjoiQzpcXGZha2VwYXRoXFw3YjIwMjBsZ2MucG5nIiwiZXN0YWRvIjpmYWxzZX1d.BuMotRRpb6zQafaxulJaAuFHbxJrMrwQ9qnGxHa_vAY&pwd=eyJhbGciOiJIUzI1NiJ9.MTIzNDU2.08GLf-Nv5ttC8Rhba185m3wg_nSP1f--yoxot_BmhM8

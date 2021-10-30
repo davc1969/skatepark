@@ -2,10 +2,13 @@ const { StatusCodes: httpCodes } = require("http-status-codes");
 const poolQuery = require("../services/pg_pool_services").pgPoolQuery;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { authKey } = require("../config/auth")
+const { authKey } = require("../config/auth");
+const { v4: uuidv4 } = require('uuid');
+
 
 const getAll = async (req, res) => {
     console.log("Controller skate getAll");
+    
     const querySQL = {
         text: "select * from skaters;",
         values: []
@@ -58,9 +61,22 @@ const postSkater = async (req, res) => {
     console.log("Controller skate post skater");
 
     try {
+        console.log("post sk body ", req.body);
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         req.body.password = hashedPassword;
         req.body.anos_experiencia = parseInt(req.body.anos_experiencia);
+        if (req.files) {
+            console.log(req.files);
+            const pic = req.files.skaterPic;
+            const newPicName = "/pic/ " + req.body.email + "_" + uuidv4().slice(0, 8);
+            console.log(newPicName);
+            pic.mv(newPicName, (error) => {
+                if(error) return res.status(500).send(err)
+            })
+            req.body.foto = newPicName;
+        } else {
+            console.log("no hubo req files");
+        }
         const querySQL = {
             text: "insert into skaters (email, nombre, password, anos_experiencia, especialidad, foto, estado) values($1, $2, $3, $4, $5, $6, $7) returning *;",
             values: Object.values(req.body)
@@ -73,6 +89,7 @@ const postSkater = async (req, res) => {
             listaSkaters: JSON.parse(results)
         }
     } catch (error) {
+        console.log("error en post ", error);
         return {
             serverCode: httpCodes.INTERNAL_SERVER_ERROR,
             error: error.code,
@@ -155,12 +172,13 @@ const skatersHATEOAS = (skaters) => {
 
 
 
-const skaterUploadImage = (req, res) => {
-    const imgFile = req.files ? req.files.target_file : null;
+const uploadSkaterPic = (req, res) => {
+    console.log("upload ", req.files);
+    const imgFile = req.files ? req.files.skaterPic : null;
     if (!imgFile) {
         res.json({
-            error: error.id,
-            message: error.message
+            error: 500,
+            message: "no"
         })
     } else {
         archivo.mv(path.join("/pics", imgFile), (error) => {
@@ -233,5 +251,6 @@ module.exports = {
     postSkater,
     deleteOne,
     editOne,
-    verifyLogin
+    verifyLogin,
+    uploadSkaterPic
 }

@@ -33,7 +33,7 @@ document.getElementById("submitSkater").addEventListener("click", async (event) 
             console.error(error)
         } finally {
             console.log("register finally");
-            location.href = "/"
+            //location.href = "/"
         }
     }
 })
