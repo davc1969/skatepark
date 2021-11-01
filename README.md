@@ -5,12 +5,18 @@
 
 ##### v1.0.0
 Sistema detallado de API REST con sistema CRUD completo basado en la base de datos ***skaters***.
-Muestra los usuarios de un SkatePark, permite ingresar nuevos usarios, actualizar su información, borrarla y por supuesto,, mostrarla.
+
+Muestra los usuarios de un SkatePark, permite ingresar nuevos usarios, actualizar su información, borrarla y por supuesto, mostrarla.
+
 Al mostrarla, el API devuelve la información como un arreglo **HATEOAS**, desde el cual luego se lle la información detallada para mostrarla en la página de inicio.
-Para que cada usuario pueda modificar sus datos, debe hacer login con la nformación de su correo y password, esto genera un token utilizando la librería *jwt* que luego es pasado a la ruta ***/datos*** para que sea renderizada la infromación que contiene.
+Para que cada usuario pueda modificar sus datos, debe hacer login con la información de su correo y password, esto genera un token utilizando la librería *jwt* que luego es pasado a la ruta ***/datos*** para que sea renderizada la infromación que contiene.
+
 La ruta ***/admin*** permite cambiar el estado de los skaters de manera de decir si su registro fue aprobado o no.  Esta ruta también debería estar protegida con un usuario y contraseña, pero eso aún no se implemente en la versión actual.
+
 Como último comentario, la fotografía que sube cada usuario fue modificada con la librería *jimp* para cambiar su tamaño y hacerla mas liviana para no ocupar espacio en el servidor.
+
 Para efectos de revisión se incluye archivo **skatepark_db.sql** con las instrucciones para crear la base de datos.  El password de todos los usuarios es el mismo: *123456*.
+
 
 Realizado por ***Darío Valenzuela***, noviembre 2021
 
