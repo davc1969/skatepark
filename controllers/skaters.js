@@ -1,14 +1,16 @@
 const { StatusCodes: httpCodes } = require("http-status-codes");
 const poolQuery = require("../services/pg_pool_services").pgPoolQuery;
+const poolTransaction = require("../services/pg_pool_services").pgPoolTransaction;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 const { authKey } = require("../config/auth");
 const { v4: uuidv4 } = require('uuid');
+const jimp = require("jimp");
 
 
 const getAll = async (req, res) => {
     console.log("Controller skate getAll");
-    
     const querySQL = {
         text: "select * from skaters;",
         values: []
@@ -41,11 +43,13 @@ const getOne = async (req, res) => {
 
     try {
         const results = await poolQuery(querySQL);
+        const resultsJSON = JSON.parse(results);
+        resultsJSON[0].foto = "/pics/" + resultsJSON[0].foto;
         return {
             serverCode: httpCodes.OK,
             error: 0,
             errorMessage: "",
-            listaSkaters: JSON.parse(results)
+            listaSkaters: resultsJSON
         }
     } catch (error) {
         return {
@@ -65,18 +69,7 @@ const postSkater = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         req.body.password = hashedPassword;
         req.body.anos_experiencia = parseInt(req.body.anos_experiencia);
-        if (req.files) {
-            console.log(req.files);
-            const pic = req.files.skaterPic;
-            const newPicName = "/pic/ " + req.body.email + "_" + uuidv4().slice(0, 8);
-            console.log(newPicName);
-            pic.mv(newPicName, (error) => {
-                if(error) return res.status(500).send(err)
-            })
-            req.body.foto = newPicName;
-        } else {
-            console.log("no hubo req files");
-        }
+
         const querySQL = {
             text: "insert into skaters (email, nombre, password, anos_experiencia, especialidad, foto, estado) values($1, $2, $3, $4, $5, $6, $7) returning *;",
             values: Object.values(req.body)
@@ -89,7 +82,7 @@ const postSkater = async (req, res) => {
             listaSkaters: JSON.parse(results)
         }
     } catch (error) {
-        console.log("error en post ", error);
+        console.log("error en post ", error, error.code);
         return {
             serverCode: httpCodes.INTERNAL_SERVER_ERROR,
             error: error.code,
@@ -109,7 +102,6 @@ const deleteOne = async (req, res) => {
 
     try {
         const results = await poolQuery(querySQL);
-        console.log("delete ", results.length);
         if (results.length == 2) {
             throw error = {code: 500, message: "skater not found"}
         } else { 
@@ -130,10 +122,11 @@ const deleteOne = async (req, res) => {
     }
 };
 
+
 const editOne = async (req, res) => {
     console.log("Controller skate edit one");
     const querySQL = {
-        text: `update skaters set nombre = $1, password = $2, email = $3, anos_experiencia = $4, especialidad = $5, foto = $6, estado = $7 where id = ${req.params.id} returning *;`,
+        text: `update skaters set nombre = $1, password = $2, anos_experiencia = $3, especialidad = $4, estado = $5 where id = ${req.params.id} returning *;`,
         values: Object.values(req.body)
     }
 
@@ -156,6 +149,40 @@ const editOne = async (req, res) => {
 };
 
 
+const postSkater2 = async (req, res) => {
+    console.log("Controller skate post skater");
+
+    return new Promise ( async (resolve, reject) => {
+        try {
+            console.log("post sk body ", req.body);
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            req.body.password = hashedPassword;
+            req.body.anos_experiencia = parseInt(req.body.anos_experiencia);
+    
+            const querySQL = {
+                text: "insert into skaters (email, nombre, password, anos_experiencia, especialidad, foto, estado) values($1, $2, $3, $4, $5, $6, $7) returning *;",
+                values: Object.values(req.body)
+            }
+            const results = await poolQuery(querySQL);
+            resolve ({
+                serverCode: httpCodes.CREATED,
+                error: 0,
+                errorMessage: "",
+                listaSkaters: JSON.parse(results)
+            })
+        } catch (error) {
+            console.log("error en post ", error, error.code);
+            reject ({
+                serverCode: httpCodes.INTERNAL_SERVER_ERROR,
+                error: error.code,
+                errorMessage: error.message,
+                listaSkaters:{}
+            })
+        }
+    })
+};
+
+
 
 
 const skatersHATEOAS = (skaters) => { 
@@ -171,28 +198,77 @@ const skatersHATEOAS = (skaters) => {
 };
 
 
+const uploadSkaterPic2 = (req, res) => {
 
-const uploadSkaterPic = (req, res) => {
-    console.log("upload ", req.files);
     const imgFile = req.files ? req.files.skaterPic : null;
+    const extension = path.extname(imgFile.name)
+    let output = {};
+
     if (!imgFile) {
-        res.json({
+        console.log("upload in skaters, img no encontrada");
+        output = {
+            serverCode: httpCodes.INTERNAL_SERVER_ERROR,
             error: 500,
-            message: "no"
-        })
+            errorMessage: "no file found",
+            listaSkaters:[]
+        }
     } else {
-        archivo.mv(path.join("/pics", imgFile), (error) => {
-            if (error) { 
-                console.log("Error al cargar la foto ", error.message);
-                res.status(500).send("<h3>No se puede procesar imagen, falta información</h3>");
-            } else {
-                console.log("Imagen cargada exitosamente");
-                res.redirect("/")
+        try {
+            const newPicName = req.params.email + "_" + uuidv4().slice(0, 8) + extension;
+            imgFile.mv(path.join(__dirname, "../files/profilesPics", newPicName));
+            console.log("Imagen cargada exitosamente");
+            changeSize(path.join(__dirname, "../files/profilesPics", newPicName));
+            output = {
+                serverCode: httpCodes.ACCEPTED,
+                error: 0,
+                errorMessage: "",
+                listaSkaters: [newPicName]
             }
-        });
+        } catch (error) {
+            console.log("try 2", error);
+            output = {
+                serverCode: httpCodes.INTERNAL_SERVER_ERROR,
+                error: error.code,
+                errorMessage: error.message,
+                listaSkaters: []
+            }
+        } finally {
+            return output
+        }
     }
 }
 
+
+const adminUpdates = async (req, res) => {
+    let allQueries = [];
+
+    req.body.forEach(element => {
+        allQueries.push({
+            text: `update skaters set estado = ${element.state} where id = ${element.id};`,
+            values: []
+        })
+    });
+    let output = {};
+    try {
+        const response = await poolTransaction(allQueries)
+        output = {
+            serverCode: httpCodes.ACCEPTED,
+            error: 0,
+            errorMessage: "",
+            listaSkaters: []
+        }
+    } catch (error) {
+        console.log("Error en admin updates transacciones: ", error.message);
+        output = {
+            serverCode: httpCodes.INTERNAL_SERVER_ERROR,
+            error: error.code,
+            errorMessage: error.message,
+            listaSkaters: []
+        }
+    } finally {
+        return output
+    }
+};
 
 
 const verifyLogin = async  (req, res) => {
@@ -245,12 +321,26 @@ const generateToken = (user) => {
 }
 
 
+const changeSize = (filename) => {
+
+    console.log("entrando a usar jimp");
+    jimp.read(filename)
+    .then ( img => {
+        img.resize(60, 60).write(filename)
+    })
+    .catch ( (err) => {
+        console.log("No se cambió el tamaño ", err);
+    })
+}
+
 module.exports = {
     getAll,
     getOne,
     postSkater,
+    postSkater2,
     deleteOne,
     editOne,
     verifyLogin,
-    uploadSkaterPic
+    uploadSkaterPic2,
+    adminUpdates
 }

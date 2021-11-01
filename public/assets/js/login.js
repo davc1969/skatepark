@@ -13,7 +13,7 @@ document.getElementById("formLogin").addEventListener("submit" , async (event) =
         console.log("log ", data);
         if (data) {
             localStorage.setItem("tokenSkt", data.token);
-            location.href = "/datos?tkn=" + data.token + "&pwd=" + data.pass 
+            location.href = "/datos?tkn=" + data.token + "&pwd=" + data.pass;
         } else {
             alert("usuario o contraseña errada.  Intente nuevamente")
         }

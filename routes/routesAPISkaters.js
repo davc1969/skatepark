@@ -1,5 +1,6 @@
 const routesSkaters = require("express").Router();
 const skaters = require("../controllers/skaters");
+const { routes } = require("./routes");
 
 
 
@@ -21,8 +22,7 @@ routesSkaters.delete("/api/skater/:id", (req, res) => {
 
 routesSkaters.post("/api/skater/new", (req, res) => {
     console.log("API2 skaters post one");
-    console.log("rrff ", req.body);
-    runControl(req, res, skaters.postSkater);
+    runControl(req, res, skaters.postSkater2);
 });
 
 routesSkaters.put("/api/skater/:id", (req, res) => {
@@ -42,31 +42,61 @@ routesSkaters.post("/api/skater/auth", async (req, res) => {
 });
 
 
-routesSkaters.post("/api/skater/pic", (req, res) => {
-    console.log("API2 skaters post one");
-    console.log("rrff ", req.files);
-    runControl(req, res, skaters.uploadSkaterPic);
-    // skaters.postSkater(req, res)
-    // .then( (result) => {
-    //     res.json(result);
-    // })
-    // .catch ( (error) => {
-    //     console.log("error en post de skaters ", error.message);
-    // })
+routesSkaters.post("/api/skater/pic/:email", async (req, res) => {
+    console.log("API2 skaters post pic one");
+    console.log("API post pic ", req.files);
+    let uploaded = {}
+    try { 
+        uploaded = await skaters.uploadSkaterPic2(req, res);
+        console.log("pic ", uploaded);
+    }
+    catch (error) {
+        console.log("error de pic ", error.message);
+    }
+    finally {
+        res.status(uploaded.serverCode);
+        res.send(uploaded.listaSkaters)
+    }
 });
+
+routes.put("/api/skater_admin", async (req, res) => {
+    console.log("API skaters admin updates");
+    runControl(req, res, skaters.adminUpdates);
+})
 
 
 const runControl = (req, res, skaterFunction) => {
     skaterFunction(req, res)
     .then( (result) => {
+        console.log("runcontrol result", result);
         res.status(result.serverCode);
         res.json(result.listaSkaters)
     })
     .catch ( (error) => {
-        res.status(result.serverCode);
-        res.json(result.errorMessage)
+        console.log("error en runcontrol ", error);
+        res.status(error.serverCode);
+        res.json(error)
     })
 }
+
+const runControl2 = (req, res, skaterFunction) => {
+    
+    return new Promise ( (resolve, reject) => {
+        skaterFunction(req, res)
+        .then( (result) => {
+            console.log("runcontrol result", result);
+            res.status(result.serverCode);
+            res.json(result.listaSkaters)
+        })
+        .catch ( (error) => {
+            console.log("error en runcontrol ", error);
+            res.status(error.serverCode);
+            res.json(error)
+        })
+    })
+    
+}
+
 
 const getToken = (req, res) => {
     try {

@@ -1,12 +1,14 @@
 
-    {{# unless sessionActive.notActive }}
-        | <a href="/login">Iniciar Sesión</a> |
-    {{ else }}
-        {{# unless sessionActive.fromLogin}}
-            | <a href="/login">Cerrar Sesión</a> |
-        {{/ unless}}
-    {{/ unless }}
+    <br>
 
-    {{# unless registerActive }}
+    {{# if showInicio }}
+        | <a href="/">Inicio</a> |
+    {{/ if }}
+
+    {{# if showLogin }}
+        | <a href="/login">Iniciar Sesión</a> |
+    {{/ if }}
+        
+    {{# if showRegister }}
         | <a href="/register">Registrarme</a> |
-    {{/ unless }}
+    {{/ if }}

@@ -16,7 +16,9 @@ routes.get("/", (req, res) => {
             layout: "index",
             title: "Santiago Skate Park",
             skts: skatersInfo,
-            sessionActive: false
+            showInicio: false,
+            showLogin: true,
+            showRegister: true
         });
     })
 });
@@ -24,8 +26,9 @@ routes.get("/", (req, res) => {
 routes.get("/login", (req, res) => {
     res.render("../views/login", {
         title: "Santiago Skate Park - Login",
-        registerActive: false,
-        sessionActive: { notActive: true, fromLogin: true }
+        showInicio: true,
+        showLogin: false,
+        showRegister: true
     })
 });
 
@@ -33,8 +36,10 @@ routes.get("/register" , (req, res) => {
     
     res.render("../views/register", {
         title: "Santiago Skate Park - Registro",
-        registerActive: true,
-        sessionActive: { notActive: false, fromLogin: false }
+        showInicio: true,
+        showLogin: true,
+        showRegister: false
+
     })
 });
 
@@ -46,10 +51,31 @@ routes.get("/datos", (req, res) => {
     res.status(200);
     res.render("../views/datos", {
         title: "Santiago Skate Park - Datos de skater",
-        registerActive: true,
-        sessionActive: { notActive: false, fromLogin: false },
         user: user[0],
-        pwd: pwd
+        pwd: pwd,
+        showInicio: true,
+        showLogin: false,
+        showRegister: false
+    })
+});
+
+routes.get("/admin", (req, res) => {
+    console.log("en ruta admin");
+    let skatersInfo = [];
+    skaters.getAll(req, res)
+    .then( async (skList) => {
+        skatersInfo = await createSkArray(req, res, skList.listaSkaters)
+    })
+    .then( () => {
+        res.render("../views/admin", 
+        {
+            layout: "index",
+            title: "Santiago Skate Park",
+            skts: skatersInfo,
+            showInicio: true,
+            showLogin: false,
+            showRegister: false
+        });
     })
 })
 
@@ -63,6 +89,7 @@ const createSkArray = async (req, res, skList) => {
         for (i = 0; i < skList.length; i++) {
             req.params.id = skList[i].id;
             resultOne = await skaters.getOne(req, res);
+            resultOne.listaSkaters[0].index = i + 1;
             skatersArray.push(resultOne.listaSkaters[0]);
         };
         return skatersArray;

@@ -19,35 +19,50 @@
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Nombre</label>
-            <input class="form-control m-auto" value={{ user.nombre}} />
+            <input 
+              type="text"
+              class="form-control m-auto" 
+              id="skaterNewName"
+              value={{ user.nombre}} 
+            />
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Password</label>
             <input
               type="password"
               class="form-control m-auto"
+              id="skaterNewPassword1"
               value={{ pwd }}
             />
           </div>
           <div class="form-group col-12 col-sm-6">
-            <label>Repita la password</label>
+            <label>Repita el password</label>
             <input
               type="password"
               class="form-control m-auto"
+               id="skaterNewPassword2"
               value={{ pwd }}
             />
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Años de experiencia</label>
-            <input class="form-control m-auto" value={{ user.anos_experiencia }} />
+            <input 
+              class="form-control m-auto" 
+              id="skaterNewExperience"
+              value={{ user.anos_experiencia }} 
+            />
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Especialidad</label>
-            <input class="form-control m-auto" value={{ user.especialidad }} />
+            <input 
+              class="form-control m-auto" 
+              id="skaterNewHability"
+              value={{ user.especialidad }} 
+            />
           </div>
         </div>
         <div class="mb-1">
-          <button class="btn btn-primary">Actualizar</button>
+          <button class="btn btn-primary" id="btn_updateAccount" data-idSkater={{ user.id }}>Actualizar</button>
         </div>
         <div>
           <button class="btn btn-danger" id="btn_deleteAccount" data-idSkater={{ user.id }}>Eliminar cuenta</button>

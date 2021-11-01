@@ -18,8 +18,8 @@
 
           {{# each skts }}
             <tr>
-                <th scope="row">{{ this.id }}</th>
-                <td><div></div></td>
+                <th scope="row">{{ this.index }}</th>
+                <td><img src="{{ this.foto }}" width="60" height="60" alt="{{ this.nombre}}"></td>
                 <td>{{ this.nombre }}</td>
                 <td>{{ this.anos_experiencia}}</td>
                 <td>{{ this.especialidad }}</td>
@@ -33,5 +33,4 @@
           
         </tbody>
       </table>
-      <p>{{ sessionActive}} </p>
     </div>

@@ -12,7 +12,7 @@ POST http://localhost:3000/api/skater/new
 Content-Type: application/json
 
 {
-    "email": "d@skater.com",
+    "email": "de@skater.com",
     "nombre": "Dario Valenzuela 2",
     "password":"admin",
     "anos_experiencia": 1,

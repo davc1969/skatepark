@@ -3,12 +3,17 @@
     - falta construir:
         * Admin
         * Datos
-        * Registro
-        + Login ya está el html, falta el js que lo acompañe
+
 - crear registro que permita seleccionar foto.  Usar librería express-fileupload
-- Aplicar validadcion de datos de entrada en registro según librería JOI
 - path para guardar fotos debe ser público con express.static
-- crear js en frontend para solicitar autenticación en login con JWT
-- La validación del login también se puede hacer con JOI en el servidor, pero debería hacerse directo en el frontend con js simple
 - Hacer un modulo de testing con librería Mocha-Chai para probar su implementación
 
+
+
+Pasos para establecer el JWT en este proyecto:
+- desde el formulario LOGIN, envíar un fetch con el nombre y el password
+- En la ruta se verifica si exoste el usuario y se comapra la clave.  
+- Si coinciden las claves, se genera un JWT con la clave previamente establecida en el archivo corresponidente en directorio config
+- El JWT creado, con la librería jsonwebtoken, se devuelve a la función que lo llamó, en donde se guardará en el localstorage
+- El JWT contendrá toda la información del skater, la cual será tomada directo de la base de datos cuando se genere
+- Ese JWT se pasa como parametro a la hoja DATOS, en donde se decodifica y se llena el partial con la información
