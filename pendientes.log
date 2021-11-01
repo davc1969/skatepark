@@ -1,15 +1,4 @@
 
-- construir todos los parciales y las vistas
-    - falta construir:
-        * Admin
-        * Datos
-
-- crear registro que permita seleccionar foto.  Usar librería express-fileupload
-- path para guardar fotos debe ser público con express.static
-- Hacer un modulo de testing con librería Mocha-Chai para probar su implementación
-
-
-
 Pasos para establecer el JWT en este proyecto:
 - desde el formulario LOGIN, envíar un fetch con el nombre y el password
 - En la ruta se verifica si exoste el usuario y se comapra la clave.  
